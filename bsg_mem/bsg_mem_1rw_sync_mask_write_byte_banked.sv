@@ -14,8 +14,8 @@
  *  - width_p : width of the total memory
  *  - els_p : depth of the total memory
  *
- *  - num_width_bank_p : Number of banks for the memory's width. width_p has
- *    to be a multiple of this number.
+ *  - num_width_bank_p : Number of banks for the memory's width. data_width_p
+ *    has to be a multiple of 8 times this number, so each bank is whole bytes.
  *  - num_depth_bank_p : Number of banks for the memory's depth. If it is a
  *    power of two, it has to divide els_p, and the low address bits pick the
  *    bank. Otherwise els_p/num_depth_bank_p has to be a power of two, and the
@@ -164,6 +164,8 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
     assert(data_width_p % num_width_bank_p == 0)
       else $error("[BSG_ERROR] num_width_bank_p does not divide even with width_p. %m");
+    assert(bank_width_lp % 8 == 0)
+      else $error("[BSG_ERROR] each width bank must be a whole number of bytes (data_width_p/num_width_bank_p must be a multiple of 8). %m");
 
   end
   
