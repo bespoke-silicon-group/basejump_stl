@@ -36,8 +36,8 @@ bfloat16      8                 7
 
     - 3-stage pipeline.
     - rounding mode is "round to nearest even".
-    - If either input is signaling NaN, the output is signaling NaN,
-      and invalid exceptinon is raised.
+    - If either input is signaling NaN, the output is quiet NaN,
+      and invalid exception is raised.
     - If either input is quiet NaN, output is set to quiet NaN.
     - If both inputs are infinite, output is set to either infinite or quiet NaN,
       depending on sub_i and signs of inputs.
@@ -56,7 +56,7 @@ bfloat16      8                 7
 
     - 3-stage pipeline.
     - rounding mode is "round to nearest even".
-    - If either input is signaling NaN, output is set to signaling NaN, and invalid exception is raised.
+    - If either input is signaling NaN, output is set to quiet NaN, and invalid exception is raised.
     - If either input is quiet NaN, output is set to quiet NaN.
     - If one input is infinite and the other is finite, then the output is set to infinity.
     - If one input is infinite and the other is zero, then the output is set to quiet NaN,
