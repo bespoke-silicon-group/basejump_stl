@@ -227,6 +227,13 @@ int main()
   test_add_sub_32(1, 1.0f, infty());                    // x - inf = -inf
   test_add_sub_32(1, -infty(), 1.0f);                   // -inf - x = -inf
 
+  // overflow, also when it is rounding up that carries into the exponent
+  test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x7f7fffff)); // max + max
+  test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x73000000)); // max + half an ulp
+  test_add_sub_32(0, i2f(0xff7fffff), i2f(0xf3000000)); // the same, negative
+  test_add_sub_32(1, i2f(0x7f7fffff), i2f(0xf3000000)); // the same, by sub_i
+  test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x72ffffff)); // just less: stays max
+
   for (int i = 0; i < 2500; i++)
   {
     int add_or_sub = rand() % 2;

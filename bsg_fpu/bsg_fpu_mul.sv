@@ -360,7 +360,10 @@ module bsg_fpu_mul
       z_o = `BSG_FPU_INFTY(sgn,e_p,m_p); // infty 
     end
     else begin 
-      if (pre_roundup_3_r[m_p+:e_p] == {e_p{1'b1}} & (pre_roundup_3_r[m_p] | carry_into_exp)) begin
+      // overflow: the exponent is all ones before rounding, or the carry
+      // from rounding up makes it all ones.
+      if ((pre_roundup_3_r[m_p+:e_p] == {e_p{1'b1}})
+          | (rounded[m_p+:e_p] == {e_p{1'b1}})) begin
         unimplemented_o = 1'b0;
         invalid_o = 1'b0;
         overflow_o = 1'b1;

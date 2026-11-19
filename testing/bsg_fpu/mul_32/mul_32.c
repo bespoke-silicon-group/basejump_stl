@@ -159,6 +159,12 @@ int main()
   test_mul_32(3.141592, 2.718281); // pi - e
   test_mul_32(1.42341, 0.09842);
 
+  // overflow, also when it is rounding up that carries into the exponent
+  test_mul_32(i2f(0x7f7fffff), i2f(0x40000000)); // max * 2
+  test_mul_32(i2f(0x3ffffffe), i2f(0x7f000001)); // rounds up to 2^128
+  test_mul_32(i2f(0xbffffffe), i2f(0x7f000001)); // the same, negative
+  test_mul_32(i2f(0x3ffffffe), i2f(0x7f000000)); // just less: stays finite
+
   for (int i = 0; i < 5000; i++)
   {
     float a = randf();
