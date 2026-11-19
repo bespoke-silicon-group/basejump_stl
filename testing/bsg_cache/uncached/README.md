@@ -29,3 +29,20 @@ cached traffic continues to use `dest_wh_cord_i`.
 All cached requests of this test hit, and the IO endpoint is the only one
 behind the cache. `../uncached_random` runs uncached requests between cache
 misses, evictions and flushes.
+
+## When an uncached store is done
+
+The cache answers `UNCACHED_SW` as soon as the word is queued in its DMA
+output. The packet may not have left `bsg_cache_dma_to_wormhole` yet, and a
+write packet gets no reply. So the response does not say that the word has
+reached the endpoint, and neither does anything that waits for that response.
+
+`UNCACHED_LW` does say it for the stores before it. All packets of one cache
+leave in order through one adapter, and the endpoint answers the load. Its
+response therefore comes back only after an endpoint that serves its requests
+in order has received every earlier `UNCACHED_SW` of the same cache. To wait
+for uncached stores to arrive, follow them with an `UNCACHED_LW` of an address
+that is safe to read.
+
+This holds for one cache and one endpoint. It says nothing about stores sent
+through another cache, or about block writes, which go to `dest_wh_cord_i`.
