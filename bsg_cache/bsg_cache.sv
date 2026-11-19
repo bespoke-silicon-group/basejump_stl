@@ -1074,29 +1074,43 @@ end
 
 
   // track_mem ctrl logic
+  // TAGST clears the track bits of the way it writes, as it writes the tag:
+  // no word of the line is present yet, as after a store-miss allocation.
+  // TAGST does not enter during a miss, so the miss handler is not using
+  // track_mem, and the track buffer stays off the port in that cycle.
+  logic [ways_p-1:0][block_size_in_words_p-1:0] tagst_track_mem_w_mask;
+  for (genvar i = 0; i < ways_p; i++) begin: tagst_track
+    assign tagst_track_mem_w_mask[i] = {block_size_in_words_p{addr_way_decode[i]}};
+  end
+
   assign track_mem_v_li = ((yumi_o & (decode.ld_op | decode.atomic_op | partial_st))
     | (v_tl_r & recover_lo & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl))
     | miss_track_mem_v_lo
     | (tbuf_v_lo & tbuf_yumi_li)
+    | tagst_write_en
   );
 
   assign track_mem_w_li = miss_track_mem_v_lo
     ? miss_track_mem_w_lo
-    : (tbuf_v_lo & tbuf_yumi_li);
+    : ((tbuf_v_lo & tbuf_yumi_li) | tagst_write_en);
 
   assign track_mem_data_li = miss_track_mem_v_lo
     ? miss_track_mem_data_lo
-    : tbuf_track_mem_data;
+    : (tagst_write_en
+      ? {(ways_p*block_size_in_words_p){1'b0}}
+      : tbuf_track_mem_data);
 
   assign track_mem_w_mask_li = miss_track_mem_v_lo
     ? miss_track_mem_w_mask_lo
-    : tbuf_track_mem_w_mask;
+    : (tagst_write_en
+      ? tagst_track_mem_w_mask
+      : tbuf_track_mem_w_mask);
 
   assign track_mem_addr_li = recover_lo
     ? addr_index_tl
     : (miss_track_mem_v_lo
       ? miss_track_mem_addr_lo
-      : (((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
+      : ((((decode.ld_op | decode.atomic_op | partial_st) & yumi_o) | tagst_write_en)
         ? addr_index
         : tbuf_track_mem_addr));
 
@@ -1191,10 +1205,12 @@ end
   // 3) miss handler is not accessing track mem.
   // 4) TL read track mem (and bypass from tbuf), and TV is not stalled (v_we).
   //    During miss, the track buffer can be drained.
+  // 5) TAGST is not writing track mem.
   assign tbuf_yumi_li = tbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
     & (~miss_track_mem_v_lo)
-    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~miss_v));
+    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~miss_v))
+    & ~tagst_write_en;
 
   assign tbuf_bypass_addr_li = addr_tl_r;
   assign tbuf_bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & v_tl_r & v_we;
