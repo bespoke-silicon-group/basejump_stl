@@ -64,10 +64,11 @@ module bsg_wormhole_router_adapter_in
      );
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
+  // The encoded length counts flits after the first one.
   always_ff @(negedge clk_i)
-    assert(reset_i || ~packet_v_i || (packet_cast_i.len <= max_num_flits_lp))
+    assert(reset_i || ~packet_v_i || (packet_cast_i.len < max_num_flits_lp))
       else 
-        $error("Packet received with len: %x > max_num_flits: %x", packet_cast_i.len, max_num_flits_lp);
+        $error("Packet received with len: %x >= max_num_flits: %x", packet_cast_i.len, max_num_flits_lp);
 `endif
 
 endmodule

@@ -13,6 +13,7 @@
 
 `include "bsg_defines.sv"
 
+// lg_size_p must be at least 2 (a minimum depth of four entries).
 module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
                         , parameter `BSG_INV_PARAM(  width_p )
                         // we allow the control bits to be separated from
@@ -44,6 +45,9 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
     );
 
    localparam size_lp = 1 << lg_size_p;
+
+   `BSG_ELAB_CHECK(lg_size_p >= 2,
+     $error("%m: bsg_async_fifo requires lg_size_p >= 2 (at least four entries), got %0d", lg_size_p))
 
    // we use an extra bit for the pointers to detect wraparound
    logic [lg_size_p:0] r_ptr_gray_r;

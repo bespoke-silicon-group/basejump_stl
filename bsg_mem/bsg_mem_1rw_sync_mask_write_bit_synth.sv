@@ -89,10 +89,9 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 `ifdef VERILATOR
    logic [width_p-1:0] data_n;
 
-   for (genvar i = 0; i < width_p; i++)
-     begin : rof1
-       assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_li][i];
-     end // rof1
+   // Use a packed merge for the two-state Verilator model to avoid expanding
+   // each bit into a separate mux in the generated C++.
+   assign data_n = (data_i & w_mask_i) | (mem[addr_li] & ~w_mask_i);
 
    always_ff @(posedge clk_i)
      if (v_i & w_i)

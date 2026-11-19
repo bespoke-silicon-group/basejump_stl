@@ -62,6 +62,23 @@ end
 // synopsys translate_on
 
 
+if (hold_on_sr_p) begin: hold_on_sr_gen
+    logic [inputs_p-1:0] last_one_hot, highest_priority;
+
+    assign last_one_hot = inputs_p'(1) << last_r;
+    // Rotate left to select the requester immediately after the pointer.
+    if (inputs_p == 1) begin: single_input
+        assign highest_priority = last_one_hot;
+    end else begin: multiple_inputs
+        assign highest_priority = {last_one_hot[inputs_p-2:0], last_one_hot[inputs_p-1]};
+    end
+    // An unused pointer encoding decodes to zero; it must not hold on idle.
+    assign hold_on_sr = v_o && (reqs_i == highest_priority);
+end else begin: not_hold_on_sr_gen
+    assign hold_on_sr = 1'b0;
+end
+
+
 if(inputs_p == 1)
 begin: inputs_1
 
@@ -79,19 +96,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {1{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           1'b0 : hold_on_sr = ( reqs_i == 1'b1 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_1 
     assign reset_on_sr = ( reqs_i == 1'b1 ) 
@@ -123,19 +127,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {2{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           1'b0 : hold_on_sr = ( reqs_i == 2'b01 );
-           default: hold_on_sr = ( reqs_i == 2'b10 );
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_2 
     assign reset_on_sr = ( reqs_i == 2'b01 ) 
@@ -173,21 +164,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {3{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           2'b00 : hold_on_sr = ( reqs_i == 3'b010 );
-           2'b01 : hold_on_sr = ( reqs_i == 3'b001 );
-           2'b10 : hold_on_sr = ( reqs_i == 3'b100 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_3 
     assign reset_on_sr = ( reqs_i == 3'b010 ) 
@@ -233,21 +209,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {4{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           2'b00 : hold_on_sr = ( reqs_i == 4'b0100 );
-           2'b01 : hold_on_sr = ( reqs_i == 4'b0010 );
-           2'b10 : hold_on_sr = ( reqs_i == 4'b0001 );
-           default: hold_on_sr = ( reqs_i == 4'b1000 );
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_4 
     assign reset_on_sr = ( reqs_i == 4'b0100 ) 
@@ -303,23 +264,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {5{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           3'b000 : hold_on_sr = ( reqs_i == 5'b01000 );
-           3'b001 : hold_on_sr = ( reqs_i == 5'b00100 );
-           3'b010 : hold_on_sr = ( reqs_i == 5'b00010 );
-           3'b011 : hold_on_sr = ( reqs_i == 5'b00001 );
-           3'b100 : hold_on_sr = ( reqs_i == 5'b10000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_5 
     assign reset_on_sr = ( reqs_i == 5'b01000 ) 
@@ -387,24 +331,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {6{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           3'b000 : hold_on_sr = ( reqs_i == 6'b010000 );
-           3'b001 : hold_on_sr = ( reqs_i == 6'b001000 );
-           3'b010 : hold_on_sr = ( reqs_i == 6'b000100 );
-           3'b011 : hold_on_sr = ( reqs_i == 6'b000010 );
-           3'b100 : hold_on_sr = ( reqs_i == 6'b000001 );
-           3'b101 : hold_on_sr = ( reqs_i == 6'b100000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_6 
     assign reset_on_sr = ( reqs_i == 6'b010000 ) 
@@ -486,25 +412,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {7{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           3'b000 : hold_on_sr = ( reqs_i == 7'b0100000 );
-           3'b001 : hold_on_sr = ( reqs_i == 7'b0010000 );
-           3'b010 : hold_on_sr = ( reqs_i == 7'b0001000 );
-           3'b011 : hold_on_sr = ( reqs_i == 7'b0000100 );
-           3'b100 : hold_on_sr = ( reqs_i == 7'b0000010 );
-           3'b101 : hold_on_sr = ( reqs_i == 7'b0000001 );
-           3'b110 : hold_on_sr = ( reqs_i == 7'b1000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_7 
     assign reset_on_sr = ( reqs_i == 7'b0100000 ) 
@@ -602,25 +509,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {8{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           3'b000 : hold_on_sr = ( reqs_i == 8'b01000000 );
-           3'b001 : hold_on_sr = ( reqs_i == 8'b00100000 );
-           3'b010 : hold_on_sr = ( reqs_i == 8'b00010000 );
-           3'b011 : hold_on_sr = ( reqs_i == 8'b00001000 );
-           3'b100 : hold_on_sr = ( reqs_i == 8'b00000100 );
-           3'b101 : hold_on_sr = ( reqs_i == 8'b00000010 );
-           3'b110 : hold_on_sr = ( reqs_i == 8'b00000001 );
-           default: hold_on_sr = ( reqs_i == 8'b10000000 );
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_8 
     assign reset_on_sr = ( reqs_i == 8'b01000000 ) 
@@ -736,27 +624,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {9{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 9'b010000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 9'b001000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 9'b000100000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 9'b000010000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 9'b000001000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 9'b000000100 );
-           4'b0110 : hold_on_sr = ( reqs_i == 9'b000000010 );
-           4'b0111 : hold_on_sr = ( reqs_i == 9'b000000001 );
-           4'b1000 : hold_on_sr = ( reqs_i == 9'b100000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_9 
     assign reset_on_sr = ( reqs_i == 9'b010000000 ) 
@@ -892,28 +759,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {10{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 10'b0100000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 10'b0010000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 10'b0001000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 10'b0000100000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 10'b0000010000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 10'b0000001000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 10'b0000000100 );
-           4'b0111 : hold_on_sr = ( reqs_i == 10'b0000000010 );
-           4'b1000 : hold_on_sr = ( reqs_i == 10'b0000000001 );
-           4'b1001 : hold_on_sr = ( reqs_i == 10'b1000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_10 
     assign reset_on_sr = ( reqs_i == 10'b0100000000 ) 
@@ -1071,29 +916,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {11{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 11'b01000000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 11'b00100000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 11'b00010000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 11'b00001000000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 11'b00000100000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 11'b00000010000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 11'b00000001000 );
-           4'b0111 : hold_on_sr = ( reqs_i == 11'b00000000100 );
-           4'b1000 : hold_on_sr = ( reqs_i == 11'b00000000010 );
-           4'b1001 : hold_on_sr = ( reqs_i == 11'b00000000001 );
-           4'b1010 : hold_on_sr = ( reqs_i == 11'b10000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_11 
     assign reset_on_sr = ( reqs_i == 11'b01000000000 ) 
@@ -1275,30 +1097,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {12{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 12'b010000000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 12'b001000000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 12'b000100000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 12'b000010000000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 12'b000001000000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 12'b000000100000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 12'b000000010000 );
-           4'b0111 : hold_on_sr = ( reqs_i == 12'b000000001000 );
-           4'b1000 : hold_on_sr = ( reqs_i == 12'b000000000100 );
-           4'b1001 : hold_on_sr = ( reqs_i == 12'b000000000010 );
-           4'b1010 : hold_on_sr = ( reqs_i == 12'b000000000001 );
-           4'b1011 : hold_on_sr = ( reqs_i == 12'b100000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_12 
     assign reset_on_sr = ( reqs_i == 12'b010000000000 ) 
@@ -1506,31 +1304,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {13{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 13'b0100000000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 13'b0010000000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 13'b0001000000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 13'b0000100000000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 13'b0000010000000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 13'b0000001000000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 13'b0000000100000 );
-           4'b0111 : hold_on_sr = ( reqs_i == 13'b0000000010000 );
-           4'b1000 : hold_on_sr = ( reqs_i == 13'b0000000001000 );
-           4'b1001 : hold_on_sr = ( reqs_i == 13'b0000000000100 );
-           4'b1010 : hold_on_sr = ( reqs_i == 13'b0000000000010 );
-           4'b1011 : hold_on_sr = ( reqs_i == 13'b0000000000001 );
-           4'b1100 : hold_on_sr = ( reqs_i == 13'b1000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_13 
     assign reset_on_sr = ( reqs_i == 13'b0100000000000 ) 
@@ -1766,32 +1539,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {14{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 14'b01000000000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 14'b00100000000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 14'b00010000000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 14'b00001000000000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 14'b00000100000000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 14'b00000010000000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 14'b00000001000000 );
-           4'b0111 : hold_on_sr = ( reqs_i == 14'b00000000100000 );
-           4'b1000 : hold_on_sr = ( reqs_i == 14'b00000000010000 );
-           4'b1001 : hold_on_sr = ( reqs_i == 14'b00000000001000 );
-           4'b1010 : hold_on_sr = ( reqs_i == 14'b00000000000100 );
-           4'b1011 : hold_on_sr = ( reqs_i == 14'b00000000000010 );
-           4'b1100 : hold_on_sr = ( reqs_i == 14'b00000000000001 );
-           4'b1101 : hold_on_sr = ( reqs_i == 14'b10000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_14 
     assign reset_on_sr = ( reqs_i == 14'b01000000000000 ) 
@@ -2057,33 +1804,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {15{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 15'b010000000000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 15'b001000000000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 15'b000100000000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 15'b000010000000000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 15'b000001000000000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 15'b000000100000000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 15'b000000010000000 );
-           4'b0111 : hold_on_sr = ( reqs_i == 15'b000000001000000 );
-           4'b1000 : hold_on_sr = ( reqs_i == 15'b000000000100000 );
-           4'b1001 : hold_on_sr = ( reqs_i == 15'b000000000010000 );
-           4'b1010 : hold_on_sr = ( reqs_i == 15'b000000000001000 );
-           4'b1011 : hold_on_sr = ( reqs_i == 15'b000000000000100 );
-           4'b1100 : hold_on_sr = ( reqs_i == 15'b000000000000010 );
-           4'b1101 : hold_on_sr = ( reqs_i == 15'b000000000000001 );
-           4'b1110 : hold_on_sr = ( reqs_i == 15'b100000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_15 
     assign reset_on_sr = ( reqs_i == 15'b010000000000000 ) 
@@ -2381,33 +2101,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {16{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           4'b0000 : hold_on_sr = ( reqs_i == 16'b0100000000000000 );
-           4'b0001 : hold_on_sr = ( reqs_i == 16'b0010000000000000 );
-           4'b0010 : hold_on_sr = ( reqs_i == 16'b0001000000000000 );
-           4'b0011 : hold_on_sr = ( reqs_i == 16'b0000100000000000 );
-           4'b0100 : hold_on_sr = ( reqs_i == 16'b0000010000000000 );
-           4'b0101 : hold_on_sr = ( reqs_i == 16'b0000001000000000 );
-           4'b0110 : hold_on_sr = ( reqs_i == 16'b0000000100000000 );
-           4'b0111 : hold_on_sr = ( reqs_i == 16'b0000000010000000 );
-           4'b1000 : hold_on_sr = ( reqs_i == 16'b0000000001000000 );
-           4'b1001 : hold_on_sr = ( reqs_i == 16'b0000000000100000 );
-           4'b1010 : hold_on_sr = ( reqs_i == 16'b0000000000010000 );
-           4'b1011 : hold_on_sr = ( reqs_i == 16'b0000000000001000 );
-           4'b1100 : hold_on_sr = ( reqs_i == 16'b0000000000000100 );
-           4'b1101 : hold_on_sr = ( reqs_i == 16'b0000000000000010 );
-           4'b1110 : hold_on_sr = ( reqs_i == 16'b0000000000000001 );
-           default: hold_on_sr = ( reqs_i == 16'b1000000000000000 );
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_16 
     assign reset_on_sr = ( reqs_i == 16'b0100000000000000 ) 
@@ -2739,35 +2432,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {17{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 17'b01000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 17'b00100000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 17'b00010000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 17'b00001000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 17'b00000100000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 17'b00000010000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 17'b00000001000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 17'b00000000100000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 17'b00000000010000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 17'b00000000001000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 17'b00000000000100000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 17'b00000000000010000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 17'b00000000000001000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 17'b00000000000000100 );
-           5'b01110 : hold_on_sr = ( reqs_i == 17'b00000000000000010 );
-           5'b01111 : hold_on_sr = ( reqs_i == 17'b00000000000000001 );
-           5'b10000 : hold_on_sr = ( reqs_i == 17'b10000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_17 
     assign reset_on_sr = ( reqs_i == 17'b01000000000000000 ) 
@@ -3135,36 +2799,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {18{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 18'b010000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 18'b001000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 18'b000100000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 18'b000010000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 18'b000001000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 18'b000000100000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 18'b000000010000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 18'b000000001000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 18'b000000000100000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 18'b000000000010000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 18'b000000000001000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 18'b000000000000100000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 18'b000000000000010000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 18'b000000000000001000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 18'b000000000000000100 );
-           5'b01111 : hold_on_sr = ( reqs_i == 18'b000000000000000010 );
-           5'b10000 : hold_on_sr = ( reqs_i == 18'b000000000000000001 );
-           5'b10001 : hold_on_sr = ( reqs_i == 18'b100000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_18 
     assign reset_on_sr = ( reqs_i == 18'b010000000000000000 ) 
@@ -3570,37 +3204,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {19{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 19'b0100000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 19'b0010000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 19'b0001000000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 19'b0000100000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 19'b0000010000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 19'b0000001000000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 19'b0000000100000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 19'b0000000010000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 19'b0000000001000000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 19'b0000000000100000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 19'b0000000000010000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 19'b0000000000001000000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 19'b0000000000000100000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 19'b0000000000000010000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 19'b0000000000000001000 );
-           5'b01111 : hold_on_sr = ( reqs_i == 19'b0000000000000000100 );
-           5'b10000 : hold_on_sr = ( reqs_i == 19'b0000000000000000010 );
-           5'b10001 : hold_on_sr = ( reqs_i == 19'b0000000000000000001 );
-           5'b10010 : hold_on_sr = ( reqs_i == 19'b1000000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_19 
     assign reset_on_sr = ( reqs_i == 19'b0100000000000000000 ) 
@@ -4046,38 +3649,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {20{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 20'b01000000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 20'b00100000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 20'b00010000000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 20'b00001000000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 20'b00000100000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 20'b00000010000000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 20'b00000001000000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 20'b00000000100000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 20'b00000000010000000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 20'b00000000001000000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 20'b00000000000100000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 20'b00000000000010000000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 20'b00000000000001000000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 20'b00000000000000100000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 20'b00000000000000010000 );
-           5'b01111 : hold_on_sr = ( reqs_i == 20'b00000000000000001000 );
-           5'b10000 : hold_on_sr = ( reqs_i == 20'b00000000000000000100 );
-           5'b10001 : hold_on_sr = ( reqs_i == 20'b00000000000000000010 );
-           5'b10010 : hold_on_sr = ( reqs_i == 20'b00000000000000000001 );
-           5'b10011 : hold_on_sr = ( reqs_i == 20'b10000000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_20 
     assign reset_on_sr = ( reqs_i == 20'b01000000000000000000 ) 
@@ -4565,39 +4136,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {21{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 21'b010000000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 21'b001000000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 21'b000100000000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 21'b000010000000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 21'b000001000000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 21'b000000100000000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 21'b000000010000000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 21'b000000001000000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 21'b000000000100000000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 21'b000000000010000000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 21'b000000000001000000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 21'b000000000000100000000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 21'b000000000000010000000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 21'b000000000000001000000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 21'b000000000000000100000 );
-           5'b01111 : hold_on_sr = ( reqs_i == 21'b000000000000000010000 );
-           5'b10000 : hold_on_sr = ( reqs_i == 21'b000000000000000001000 );
-           5'b10001 : hold_on_sr = ( reqs_i == 21'b000000000000000000100 );
-           5'b10010 : hold_on_sr = ( reqs_i == 21'b000000000000000000010 );
-           5'b10011 : hold_on_sr = ( reqs_i == 21'b000000000000000000001 );
-           5'b10100 : hold_on_sr = ( reqs_i == 21'b100000000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_21 
     assign reset_on_sr = ( reqs_i == 21'b010000000000000000000 ) 
@@ -5129,40 +4667,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {22{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 22'b0100000000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 22'b0010000000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 22'b0001000000000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 22'b0000100000000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 22'b0000010000000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 22'b0000001000000000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 22'b0000000100000000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 22'b0000000010000000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 22'b0000000001000000000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 22'b0000000000100000000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 22'b0000000000010000000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 22'b0000000000001000000000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 22'b0000000000000100000000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 22'b0000000000000010000000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 22'b0000000000000001000000 );
-           5'b01111 : hold_on_sr = ( reqs_i == 22'b0000000000000000100000 );
-           5'b10000 : hold_on_sr = ( reqs_i == 22'b0000000000000000010000 );
-           5'b10001 : hold_on_sr = ( reqs_i == 22'b0000000000000000001000 );
-           5'b10010 : hold_on_sr = ( reqs_i == 22'b0000000000000000000100 );
-           5'b10011 : hold_on_sr = ( reqs_i == 22'b0000000000000000000010 );
-           5'b10100 : hold_on_sr = ( reqs_i == 22'b0000000000000000000001 );
-           5'b10101 : hold_on_sr = ( reqs_i == 22'b1000000000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_22 
     assign reset_on_sr = ( reqs_i == 22'b0100000000000000000000 ) 
@@ -5740,41 +5244,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {23{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 23'b01000000000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 23'b00100000000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 23'b00010000000000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 23'b00001000000000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 23'b00000100000000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 23'b00000010000000000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 23'b00000001000000000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 23'b00000000100000000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 23'b00000000010000000000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 23'b00000000001000000000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 23'b00000000000100000000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 23'b00000000000010000000000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 23'b00000000000001000000000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 23'b00000000000000100000000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 23'b00000000000000010000000 );
-           5'b01111 : hold_on_sr = ( reqs_i == 23'b00000000000000001000000 );
-           5'b10000 : hold_on_sr = ( reqs_i == 23'b00000000000000000100000 );
-           5'b10001 : hold_on_sr = ( reqs_i == 23'b00000000000000000010000 );
-           5'b10010 : hold_on_sr = ( reqs_i == 23'b00000000000000000001000 );
-           5'b10011 : hold_on_sr = ( reqs_i == 23'b00000000000000000000100 );
-           5'b10100 : hold_on_sr = ( reqs_i == 23'b00000000000000000000010 );
-           5'b10101 : hold_on_sr = ( reqs_i == 23'b00000000000000000000001 );
-           5'b10110 : hold_on_sr = ( reqs_i == 23'b10000000000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_23 
     assign reset_on_sr = ( reqs_i == 23'b01000000000000000000000 ) 
@@ -6400,42 +5869,6 @@ end
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {24{grants_en_i}} ;   
     
-
-if ( hold_on_sr_p ) begin 
-   
-    always_comb begin
-        unique casez( last_r )
-           5'b00000 : hold_on_sr = ( reqs_i == 24'b010000000000000000000000 );
-           5'b00001 : hold_on_sr = ( reqs_i == 24'b001000000000000000000000 );
-           5'b00010 : hold_on_sr = ( reqs_i == 24'b000100000000000000000000 );
-           5'b00011 : hold_on_sr = ( reqs_i == 24'b000010000000000000000000 );
-           5'b00100 : hold_on_sr = ( reqs_i == 24'b000001000000000000000000 );
-           5'b00101 : hold_on_sr = ( reqs_i == 24'b000000100000000000000000 );
-           5'b00110 : hold_on_sr = ( reqs_i == 24'b000000010000000000000000 );
-           5'b00111 : hold_on_sr = ( reqs_i == 24'b000000001000000000000000 );
-           5'b01000 : hold_on_sr = ( reqs_i == 24'b000000000100000000000000 );
-           5'b01001 : hold_on_sr = ( reqs_i == 24'b000000000010000000000000 );
-           5'b01010 : hold_on_sr = ( reqs_i == 24'b000000000001000000000000 );
-           5'b01011 : hold_on_sr = ( reqs_i == 24'b000000000000100000000000 );
-           5'b01100 : hold_on_sr = ( reqs_i == 24'b000000000000010000000000 );
-           5'b01101 : hold_on_sr = ( reqs_i == 24'b000000000000001000000000 );
-           5'b01110 : hold_on_sr = ( reqs_i == 24'b000000000000000100000000 );
-           5'b01111 : hold_on_sr = ( reqs_i == 24'b000000000000000010000000 );
-           5'b10000 : hold_on_sr = ( reqs_i == 24'b000000000000000001000000 );
-           5'b10001 : hold_on_sr = ( reqs_i == 24'b000000000000000000100000 );
-           5'b10010 : hold_on_sr = ( reqs_i == 24'b000000000000000000010000 );
-           5'b10011 : hold_on_sr = ( reqs_i == 24'b000000000000000000001000 );
-           5'b10100 : hold_on_sr = ( reqs_i == 24'b000000000000000000000100 );
-           5'b10101 : hold_on_sr = ( reqs_i == 24'b000000000000000000000010 );
-           5'b10110 : hold_on_sr = ( reqs_i == 24'b000000000000000000000001 );
-           5'b10111 : hold_on_sr = ( reqs_i == 24'b100000000000000000000000 );
-           default : hold_on_sr = 1'b0;
-       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_24 
     assign reset_on_sr = ( reqs_i == 24'b010000000000000000000000 ) 

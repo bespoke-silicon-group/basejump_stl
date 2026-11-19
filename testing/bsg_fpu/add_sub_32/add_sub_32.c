@@ -104,7 +104,7 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
   if (a_sig_nan || b_sig_nan)
   {
     invalid = 1;
-    z_o = i2f(0x7fbfffff);
+    z_o = i2f(0x7fc00000);
   }
   else if (a_nan || b_nan)
   {
@@ -112,9 +112,12 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
   }
   else if (a_infty && b_infty)
   {
+    // infinities of like effective sign give that infinity; of unlike sign,
+    // quiet NaN and invalid
+    invalid = (sub_mag == 0) ? 0 : 1;
     z_o = (sub_mag == 0) 
-      ? i2f(0x7fc00000)
-      : i2f(sign | 0x7fffffff);
+      ? i2f(sign | 0x7f800000)
+      : i2f(0x7fc00000);
   }
   else if (a_infty && !b_infty)
   {
@@ -194,6 +197,50 @@ int main()
   test_add_sub_32(0, 63751.42341, 1424.02359842);
   test_add_sub_32(0, 134.13111111, 2222.0229842);
   test_add_sub_32(0, 0.000042341, 505.0955842);
+
+  // zero operands, and sums that cancel exactly
+  test_add_sub_32(0, 0.0f, 0.0f);
+  test_add_sub_32(0, i2f(0x80000000), i2f(0x80000000));
+  test_add_sub_32(0, i2f(0x00800000), 0.0f);
+  test_add_sub_32(0, i2f(0x0c7fffff), i2f(0x80000000));
+  test_add_sub_32(0, -1.0f, 1.0f);
+  test_add_sub_32(1, 1.0f, 1.0f);
+
+  // the same with the other sign combinations, and with the zero as a_i
+  test_add_sub_32(0, 0.0f, i2f(0x80000000));            // (+0) + (-0) = +0
+  test_add_sub_32(0, i2f(0x80000000), 0.0f);            // (-0) + (+0) = +0
+  test_add_sub_32(1, i2f(0x80000000), 0.0f);            // (-0) - (+0) = -0
+  test_add_sub_32(1, i2f(0x80000000), i2f(0x80000000)); // (-0) - (-0) = +0
+  test_add_sub_32(1, -1.0f, -1.0f);                     // (-1) - (-1) = +0
+  test_add_sub_32(0, 0.0f, i2f(0x00800000));            // 0 + x
+  test_add_sub_32(1, 0.0f, i2f(0x0c7fffff));            // 0 - x
+
+  // infinities
+  test_add_sub_32(0, infty(), infty());                 // inf + inf = inf
+  test_add_sub_32(0, -infty(), -infty());               // -inf + -inf = -inf
+  test_add_sub_32(1, infty(), -infty());                // inf - -inf = inf
+  test_add_sub_32(1, -infty(), infty());                // -inf - inf = -inf
+  test_add_sub_32(1, infty(), infty());                 // inf - inf: invalid
+  test_add_sub_32(0, infty(), -infty());                // inf + -inf: invalid
+  test_add_sub_32(0, -infty(), infty());                // -inf + inf: invalid
+  test_add_sub_32(0, infty(), 1.0f);                    // inf + x = inf
+  test_add_sub_32(1, 1.0f, infty());                    // x - inf = -inf
+  test_add_sub_32(1, -infty(), 1.0f);                   // -inf - x = -inf
+
+  // NaN operands: the result is quiet NaN, with invalid for a signaling one
+  test_add_sub_32(0, snanf(), 1.0f);
+  test_add_sub_32(1, 1.0f, snanf());
+  test_add_sub_32(0, snanf(), infty());
+  test_add_sub_32(0, snanf(), NAN);
+  test_add_sub_32(0, NAN, 1.0f);
+  test_add_sub_32(1, 1.0f, NAN);
+
+  // overflow, also when it is rounding up that carries into the exponent
+  test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x7f7fffff)); // max + max
+  test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x73000000)); // max + half an ulp
+  test_add_sub_32(0, i2f(0xff7fffff), i2f(0xf3000000)); // the same, negative
+  test_add_sub_32(1, i2f(0x7f7fffff), i2f(0xf3000000)); // the same, by sub_i
+  test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x72ffffff)); // just less: stays max
 
   for (int i = 0; i < 2500; i++)
   {

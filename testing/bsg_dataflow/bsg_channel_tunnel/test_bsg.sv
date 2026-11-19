@@ -12,6 +12,9 @@
   REMOTE_CREDITS_P 1,2,3,4,5,6
   LG_CREDIT_DECIMATION_P 0,1,2,3
 
+ The Makefile omits invalid parameter combinations. Each stream sends 64 words;
+ all streams must complete, with a timeout after 100000 cycles.
+
  ***************************************************************************/
 
 module test_bsg
@@ -27,8 +30,11 @@ module test_bsg
    parameter reset_cycles_hi_p=5
 );
 
-   wire clk;
+   bit clk;
    wire reset;
+   bit started = 0;
+   localparam words_per_channel_lp = 64;
+   logic [1:0][num_in_p-1:0] stream_done;
 
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
@@ -177,6 +183,22 @@ module test_bsg
         // j-> A B
         for (j = 0; j < 2; j++)
           begin: rof3
+             int unsigned sent_r, received_r;
+
+             always_ff @(posedge clk)
+               if (reset)
+                 begin
+                    sent_r <= 0;
+                    received_r <= 0;
+                 end
+               else if (started)
+                 begin
+                    if (yumi[j][0][i]) sent_r <= sent_r + 1;
+                    if (yumi[!j][1][i]) received_r <= received_r + 1;
+                 end
+
+             assign stream_done[j][i] = (received_r == words_per_channel_lp);
+
              // k -> I/O
              for (k = 0; k < 2; k++)
                begin: rof4
@@ -195,7 +217,7 @@ module test_bsg
 
              // * wire counter to input; this is always ready to send
              assign data [j][0][i]    = ctr_lo[j][0][i];
-             assign valid[j][0][i]    = 1'b1;
+             assign valid[j][0][i]    = started && (sent_r < words_per_channel_lp);
              assign ctr_incr[j][0][i]  = yumi[j][0][i];
 
              // * wire paired counter to output; we receive at different
@@ -206,15 +228,30 @@ module test_bsg
 
              // check data on receiving end of channel
              always_ff @(negedge clk)
-               assert(reset | ~valid[!j][1][i]
-                      | (data[!j][1][i] == ctr_lo[!j][1][i][width_p-1:0]))
-                 else $error("%m mismatch (data=%x) (counter=%x)"
-                             ,data   [!j][1][i]
-                             ,ctr_lo [!j][1][i][width_p-1:0] // need to shorten value to compare to
-                             );
+               if (started && !reset && valid[!j][1][i]
+                   && (received_r >= words_per_channel_lp
+                       || data[!j][1][i] !== ctr_lo[!j][1][i][width_p-1:0]))
+                 $fatal(1, "[BSG_ERROR] %m mismatch (data=%x) (counter=%x)"
+                        ,data[!j][1][i],ctr_lo[!j][1][i][width_p-1:0]);
           end // block: rof3
      end // block: rof2
 
-   // termination condition: all counters reach final value?
+   initial
+     begin
+        wait (reset == 1'b1);
+        wait (reset == 1'b0);
+        started = 1;
+        wait (&stream_done);
+        repeat (4) @(negedge clk);
+        $display("[BSG_FINISH] all %0d streams received %0d words"
+                 ,2*num_in_p,words_per_channel_lp);
+        $finish;
+     end
+
+   initial
+     begin
+        repeat (100000) @(posedge clk);
+        $fatal(1, "[BSG_ERROR] timeout waiting for all streams");
+     end
 
 endmodule

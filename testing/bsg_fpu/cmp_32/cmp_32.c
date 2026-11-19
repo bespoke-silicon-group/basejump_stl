@@ -64,8 +64,10 @@ void test_cmp_32(float a_i, float b_i)
   }
   else if (is_zero(a_i) && is_zero(b_i))
   {
-    min_o = 0;
-    max_o = 0;
+    // -0 is less than +0: the min is -0 if either input is, and the max is
+    // -0 only if both are.
+    min_o = i2f((hex(a_i) | hex(b_i)) & 0x80000000);
+    max_o = i2f((hex(a_i) & hex(b_i)) & 0x80000000);
   }
   else
   {

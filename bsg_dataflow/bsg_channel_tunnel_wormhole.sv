@@ -81,8 +81,8 @@ module  bsg_channel_tunnel_wormhole
   // Typically this should match number of wormhole traffic streams being merged
   ,parameter `BSG_INV_PARAM(num_in_p)
   
-  // Max number of wormhole packets buffer can store
-  // This is independent of how many flits each wormhole packet has
+  // Number of wormhole packets buffered per channel, independent of flit count.
+  // Size for credit round-trip latency and decimation as described below.
   ,parameter `BSG_INV_PARAM(remote_credits_p)
   
   // Max possible "wormhole packet payload length" setting
@@ -90,11 +90,17 @@ module  bsg_channel_tunnel_wormhole
   // This parameter determines the size of payload-flits buffer
   ,parameter `BSG_INV_PARAM(max_payload_flits_p)
   
-  // How often does channel tunnel return credits to sender
-  // Default value matches child module bsg_channel_tunnel
-  // Channel tunnel return credits to sender every (2^lg_credit_decimation_p) packets
-  // This is independent of how many flits each wormhole packet has
-  ,parameter lg_credit_decimation_p = `BSG_MIN($clog2(remote_credits_p+1),4)
+  // Credit return threshold D = 2**lg_credit_decimation_p packets per channel,
+  // independent of the number of flits in each packet.
+  // To avoid credit-induced throttling at one packet/cycle, use
+  //   remote_credits_p >= round_trip_latency_cycles + D.
+  // The round-trip latency includes data transit, receiver consumption, and
+  // credit-return arbitration/transit, excluding batching and the sender's
+  // one-cycle processing of the returned credit: (D-1) + 1 = D extra cycles.
+  // For per-channel rates R <= 1 packet/cycle, a conservative budget is
+  //   remote_credits_p >= ceil(R * round_trip_latency_cycles) + D.
+  // Use worst-case latency and account for traffic bursts; R counts packets.
+  ,parameter `BSG_INV_PARAM(lg_credit_decimation_p)
   
   // Use pseudo large fifo when read / write utilization is less than 50%
   // Given IO frequency f_io, number of IO channel num_ch, IO channel width io_width_p, 

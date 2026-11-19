@@ -1,4 +1,5 @@
 #include <bsg_nonsynth_dpi_clock_gen.hpp>
+#include <cassert>
 using namespace bsg_nonsynth_dpi;
 
 // Initializer for simuation time value in bsg_timekeeper
@@ -18,27 +19,25 @@ void bsg_timekeeper::next(){
         // of them from the priority queue before advancing time. 
         std::queue<bsg_nonsynth_dpi_clock_gen> temp;
 
-        // Examine the head of the priority queue
-        bsg_nonsynth_dpi_clock_gen &next = const_cast<bsg_nonsynth_dpi_clock_gen&>(pq.top());
-
         // Determine the next_timeval, as reported by the head of the
         // priority queue
-        long long next_timeval = next.next_edge();
+        assert(!pq.empty());
+        long long next_timeval = pq.top().next_edge();
 
         // Toggle each each clock generator with an edge at the same
         // time as next_timeval. This handles the case where there are
         // multiple clock generators with coincident clock edges.
         do {
+                // Remove a copy before changing its heap ordering key. A
+                // reference to the old head cannot survive pop(), and the
+                // last coincident edge can leave the queue temporarily empty.
+                bsg_nonsynth_dpi_clock_gen next = pq.top();
+                pq.pop();
                 next.tock();
 
                 temp.push(next);
 
-                pq.pop();
-
-                next = pq.top();
-
-
-        } while(next_timeval == next.next_edge());
+        } while(!pq.empty() && next_timeval == pq.top().next_edge());
 
         // Finally, advance the global simulation time
         advance(next_timeval);

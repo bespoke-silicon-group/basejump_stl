@@ -498,7 +498,8 @@ module bsg_cache_miss
 
         // For store tag miss, set the dirty bit for the chosen way.
         // For load tag miss, clear the dirty bit for the chosen way.
-        // For track miss, do not touch the dirty bit for the chosen way.
+        // For a load track miss, do not touch the dirty bit for the chosen way.
+        // For a store or atomic track miss, set it.
         // Set the lru_bits, so that the chosen way is not the LRU.
         // We are choosing a way to bring in a new block, which is technically
         // the MRU. lru decode unit generates the next state LRU bits, so that
@@ -507,7 +508,12 @@ module bsg_cache_miss
         stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
-        stat_mem_w_mask_out.dirty = track_miss_i ? {ways_p{1'b0}} : chosen_way_decode;
+        // On a track miss the block is already present. A store or atomic must still mark
+        // it dirty here: the TV stage does not, because miss_v is high when the request
+        // completes. A load must leave the dirty bit alone.
+        stat_mem_w_mask_out.dirty = (track_miss_i & ~(decode_v_i.st_op | decode_v_i.atomic_op))
+          ? {ways_p{1'b0}}
+          : chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
         // set the tag and the valid bit to 1'b1 for the chosen way.

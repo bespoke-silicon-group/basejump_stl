@@ -6,6 +6,9 @@
 // are absorbed, and global retiming does not seem to do this.
 //
 // For Zynq 7020, pipeline_p = 3
+//
+// Operand widths must be positive. The default output width preserves the full
+// unsigned result; override width_o_p to truncate or extend it.
 
 `include "bsg_defines.sv"
   
@@ -13,8 +16,11 @@ module bsg_mul_add_unsigned #(
     parameter  `BSG_INV_PARAM(width_a_p)
     ,parameter `BSG_INV_PARAM(width_b_p)
     ,parameter width_c_p = width_a_p + width_b_p
-    ,parameter width_o_p = `BSG_SAFE_CLOG2( ((1 << width_a_p) - 1) * ((1 << width_b_p) - 1) + 
-                                                    ((1 << width_c_p)-1) + 1 )
+    // For positive A/B/C, max(a*b+c) = 2**(A+B) - 2**A - 2**B + 2**C.
+    // Its exact width is max(A+B,C), plus a bit iff C > max(A,B).
+    // Calculate from widths to avoid overflow in the maximum-value expression.
+    ,parameter width_o_p = `BSG_MAX(width_a_p + width_b_p, width_c_p)
+                           + (width_c_p > `BSG_MAX(width_a_p, width_b_p))
     ,parameter pipeline_p = 0
   ) (
     input clk_i
