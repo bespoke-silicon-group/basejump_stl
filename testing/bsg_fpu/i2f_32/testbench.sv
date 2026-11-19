@@ -77,7 +77,7 @@ bsg_fsb_node_trace_replay #(
 
   ,.v_i(tr_v_li)
   ,.data_i(tr_data_li)
-  ,.ready_and_o(tr_ready_and_lo)
+  ,.ready_o(tr_ready_and_lo)
 
   ,.v_o(tr_v_lo)
   ,.data_o(tr_data_lo)
