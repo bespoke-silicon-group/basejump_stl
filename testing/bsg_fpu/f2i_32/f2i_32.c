@@ -41,7 +41,7 @@ void test_signed_f2i_32(float a_i)
     z_lo = 0x7fffffff;
     invalid = 1;
   }
-  else if (a_i > (float) INT_MAX)
+  else if (a_i >= 2147483648.0f) // 2^31 and above do not fit
   {
     z_lo = 0x7fffffff;
     invalid = 1;
@@ -74,10 +74,16 @@ void test_unsigned_f2i_32(float a_i)
   uint32_t z_lo;
   int invalid;
 
-  if (a_i < 0.0)
+  if (a_i <= -1.0f)
   {
     z_lo = 0;
     invalid = 1;
+  }
+  else if (a_i < 0.0f)
+  {
+    // above -1: the fractional part is dropped, leaving zero
+    z_lo = 0;
+    invalid = 0;
   }
   else if (is_nan(a_i) || is_infty(a_i))
   {
@@ -85,7 +91,7 @@ void test_unsigned_f2i_32(float a_i)
     z_lo = 0xffffffff;
     invalid = 1;
   }
-  else if (a_i > (float) UINT_MAX)
+  else if (a_i >= 4294967296.0f) // 2^32 and above do not fit
   {
     z_lo = 0x7fffffff;
     invalid = 1;
@@ -106,8 +112,25 @@ int main()
 {
   test_signed_f2i_32(0);
   test_unsigned_f2i_32(0);
-  test_signed_f2i_32(-0);
-  test_unsigned_f2i_32(-0);
+  test_signed_f2i_32(-0.0f);
+  test_unsigned_f2i_32(-0.0f);
+
+  // negative inputs to unsigned: valid above -1, invalid from -1 down
+  test_unsigned_f2i_32(i2f(0x80000001)); // the negative float nearest zero
+  test_unsigned_f2i_32(i2f(0xbf7fffff)); // just above -1
+  test_unsigned_f2i_32(-1.0f);
+  test_unsigned_f2i_32(i2f(0xbf800001)); // just below -1
+
+  // the ends of the signed range
+  test_signed_f2i_32(i2f(0xcf000000));   // -2^31 fits
+  test_signed_f2i_32(i2f(0xcf000001));   // the next float below it does not
+  test_signed_f2i_32(i2f(0x4effffff));   // the float just below 2^31 fits
+  test_signed_f2i_32(i2f(0x4f000000));   // 2^31 does not
+
+  // the top of the unsigned range
+  test_unsigned_f2i_32(i2f(0x4f7fffff)); // the float just below 2^32 fits
+  test_unsigned_f2i_32(i2f(0x4f800000)); // 2^32 does not
+  test_unsigned_f2i_32(i2f(0x50000000)); // 2^33
 
   test_signed_f2i_32(infty());
   test_unsigned_f2i_32(infty());

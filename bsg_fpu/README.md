@@ -85,10 +85,11 @@ bfloat16      8                 7
 5.  bsg_fpu_f2i
     - No pipeline stage.
     - there is a port (signed_i) to decide whether the output integer is signed or unsigned.
-    - If the input is negative float and the output is chosen to be unsigned,
-      then the output is set to zero and invalid exception is raised.
-    - If the input is (+/-) zero, or exponent is too small or big, or the input is NaN,
-      then the output is set to zero and invalid exception is raised.
+    - The fractional part is dropped (round toward zero).
+    - Invalid exception is raised if the input is NaN or infinite, or if the value left after
+      dropping the fractional part does not fit the output integer.
+    - A negative input above -1 leaves zero, so it is valid for unsigned output too. A negative
+      input of -1 or less with unsigned output sets the output to zero and raises invalid.
 
 
 

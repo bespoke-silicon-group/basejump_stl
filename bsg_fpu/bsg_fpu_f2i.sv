@@ -6,14 +6,12 @@
  *  Parameterized float-to-int converter.
  *  It supports conversion to signed or unsigned int.
  *
- *  If the input float is negative, and the target is unsigned int 
- *  then the output is set to zero, and invalid flag is raised.
- *
- *  If the input float is too big (exp out of range), 
- *  then the output is set to zero, and invalid flag is raised. 
- *  
  *  Casting float to int should drop the fractional part, instead of 
  *  rounding up.
+ *
+ *  The invalid flag is raised if the input float is NaN or infinite, or if
+ *  the value left after dropping the fractional part does not fit the target
+ *  int. A negative float above -1 leaves zero, which fits unsigned int too.
  *
  */
 
@@ -75,6 +73,12 @@ module bsg_fpu_f2i
     //: (exp > 8'd158);
   assign exp_too_small = exp < bias_lp; 
 
+  // the most negative signed int, -2^(width_lp-1), is the one value with its
+  // exponent that still fits.
+  logic signed_min;
+  assign signed_min = signed_i & sign
+    & (exp == (bias_lp+width_lp-1)) & (mantissa == '0);
+
   // determine shift amount
   //
   logic [width_lp-1:0] preshift;
@@ -120,12 +124,19 @@ module bsg_fpu_f2i
         : {~signed_i, {(width_lp-1){1'b1}}};
       invalid_o = 1'b1;
     end
+    else if (zero | exp_too_small) begin
+      // magnitude below one: dropping the fractional part leaves zero, which
+      // fits unsigned int even when the input is negative.
+      z_o = '0;
+      invalid_o = 1'b0;
+    end
     else if (~signed_i & sign) begin
+      // negative, with a magnitude of one or more, to unsigned int
       z_o = '0;
       invalid_o = 1'b1;
     end
-    else if (zero) begin
-      z_o = '0;
+    else if (signed_min) begin
+      z_o = {1'b1, {(width_lp-1){1'b0}}};
       invalid_o = 1'b0;
     end
     else if (exp_too_big) begin
@@ -133,10 +144,6 @@ module bsg_fpu_f2i
         ? {1'b1, {(width_lp-1){1'b0}}}
         : {1'b0, {(width_lp-1){1'b1}}};
       invalid_o = 1'b1;
-    end
-    else if (exp_too_small) begin
-      z_o = '0;
-      invalid_o = 1'b0;
     end
     else begin
       z_o = post_round;
