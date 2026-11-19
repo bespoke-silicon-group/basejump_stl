@@ -7,6 +7,10 @@
 
 TEST_DIRS = ./axe_test/ ./axi_test/ ./regression_64/ ./regression_v2/ ./wormhole/
 
+# Directed tests built on ../Makefile.sim. They do not need bsg_cadenv.
+TEST_DIRS += ./tagst_dirty/ ./tagst_during_miss/ ./tagst_interlock/
+TEST_DIRS += ./tagst_track_clear/ ./word_tracking_dirty/
+
 all:
 	$(foreach x,$(TEST_DIRS), $(MAKE) -C $(x);)
 
