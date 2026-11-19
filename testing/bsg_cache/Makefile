@@ -11,6 +11,9 @@ TEST_DIRS = ./axe_test/ ./axi_test/ ./regression_64/ ./regression_v2/
 TEST_DIRS += ./tagst_dirty/ ./tagst_during_miss/ ./tagst_interlock/
 TEST_DIRS += ./tagst_track_clear/ ./word_tracking_dirty/
 
+# Uncached requests through bsg_cache_dma_to_wormhole. Also on ../Makefile.sim.
+TEST_DIRS += ./uncached/
+
 all:
 	$(foreach x,$(TEST_DIRS), $(MAKE) -C $(x);)
 
