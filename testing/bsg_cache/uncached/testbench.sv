@@ -2,18 +2,48 @@
 `include "bsg_cache.svh"
 `include "bsg_noc_links.svh"
 
+// Each parameter takes its default from the macro of the same name in upper
+// case, so that the Makefile can set it with +define+.
+`ifndef DMA_RATIO_P
+  `define DMA_RATIO_P 1
+`endif
+`ifndef WORD_TRACKING_P
+  `define WORD_TRACKING_P 1
+`endif
+`ifndef STALL_P
+  `define STALL_P 0
+`endif
+`ifndef BUFFER_RETURN_P
+  `define BUFFER_RETURN_P 1
+`endif
+`ifndef ZERO_LATENCY_P
+  `define ZERO_LATENCY_P 0
+`endif
+`ifndef SETS_P
+  `define SETS_P 128
+`endif
+`ifndef WAYS_P
+  `define WAYS_P 8
+`endif
+`ifndef BLOCK_SIZE_IN_WORDS_P
+  `define BLOCK_SIZE_IN_WORDS_P 8
+`endif
+`ifndef ADDR_WIDTH_P
+  `define ADDR_WIDTH_P 16
+`endif
+
 module testbench;
   import bsg_cache_pkg::*;
 
-  parameter dma_ratio_p=1;
-  parameter word_tracking_p=1;
-  parameter stall_p=0;
-  parameter buffer_return_p=1;
-  parameter zero_latency_p=0;
-  parameter sets_p=128;
-  parameter ways_p=8;
-  parameter block_size_in_words_p=8;
-  parameter addr_width_p=16;
+  parameter dma_ratio_p=`DMA_RATIO_P;
+  parameter word_tracking_p=`WORD_TRACKING_P;
+  parameter stall_p=`STALL_P;
+  parameter buffer_return_p=`BUFFER_RETURN_P;
+  parameter zero_latency_p=`ZERO_LATENCY_P;
+  parameter sets_p=`SETS_P;
+  parameter ways_p=`WAYS_P;
+  parameter block_size_in_words_p=`BLOCK_SIZE_IN_WORDS_P;
+  parameter addr_width_p=`ADDR_WIDTH_P;
   localparam dma_data_width_p=32*dma_ratio_p;
   localparam set_offset_lp=$clog2(block_size_in_words_p)+2;
   localparam way_offset_lp=$clog2(sets_p)+set_offset_lp;
