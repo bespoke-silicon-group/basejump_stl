@@ -322,6 +322,20 @@ module bsg_cache_to_test_dram
     end
   end
 
+`ifndef BSG_HIDE_FROM_SYNTHESIS
+  // This module does not implement uncached requests (uncached_op in
+  // bsg_cache_dma_pkt_s). It would run one as a transfer of a whole block,
+  // and the cache expects a single beat.
+  always_ff @ (negedge core_clk_i) begin
+    if (~core_reset_i) begin
+      for (integer i = 0; i < num_cache_p; i++) begin
+        assert(~((dma_pkt_v_i[i] === 1'b1) & (dma_pkt[i].uncached_op === 1'b1)))
+          else $error("[BSG_ERROR][BSG_CACHE_TO_TEST_DRAM] uncached request from cache %0d: not supported by this module. %m T=%t", i, $time);
+      end
+    end
+  end
+`endif
+
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_cache_to_test_dram)

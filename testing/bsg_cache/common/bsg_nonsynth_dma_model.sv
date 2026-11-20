@@ -282,6 +282,16 @@ module bsg_nonsynth_dma_model
     end
   end
 
+  // This model does not implement uncached requests (uncached_op in
+  // bsg_cache_dma_pkt_s). It would run one as a transfer of a whole block,
+  // and the cache expects a single beat.
+  always_ff @ (negedge clk_i) begin
+    if (~reset_i) begin
+      assert(~((dma_pkt_v_i === 1'b1) & (dma_pkt.uncached_op === 1'b1)))
+        else $error("[BSG_ERROR][BSG_NONSYNTH_DMA_MODEL] uncached request: not supported by this model. %m T=%t", $time);
+    end
+  end
+
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_nonsynth_dma_model)

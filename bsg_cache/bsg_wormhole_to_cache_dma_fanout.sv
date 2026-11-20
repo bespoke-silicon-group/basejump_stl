@@ -413,6 +413,16 @@ module bsg_wormhole_to_cache_dma_fanout
     $error("WH flit width must be larger than address width");
   if (wh_len_width_p < `BSG_WIDTH(dma_burst_len_p+1))
     $error("WH len width %d must be large enough to hold the dma transfer size %d", wh_len_width_p, `BSG_WIDTH(dma_burst_len_p+1));
+
+  // This module serves block transfers only. An uncached packet (uncached_op
+  // in the header flit) belongs at the coordinate that
+  // bsg_cache_dma_to_wormhole takes as dest_io_wh_cord_i, not here.
+  always_ff @ (negedge clk_i) begin
+    if (~reset_i) begin
+      assert(~((send_state_r == SEND_READY) & (wh_link_sif_in.v === 1'b1) & (header_flit_in.uncached_op === 1'b1)))
+        else $error("[BSG_ERROR][BSG_WORMHOLE_TO_CACHE_DMA_FANOUT] uncached packet received: not supported by this module. %m T=%t", $time);
+    end
+  end
 `endif
 
 endmodule
