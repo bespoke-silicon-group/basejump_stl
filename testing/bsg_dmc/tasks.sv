@@ -10,6 +10,17 @@
     `define RANDOM_THRESHOLD 0
 `endif
 
+// Bank targeted by the regression test. Periodic calibration reads always go
+// to bank 0. A non-zero value keeps a command for another bank pending when
+// they fire.
+`ifndef TEST_BANK
+    `define TEST_BANK 0
+`endif
+
+`ifndef NUM_BURSTS
+    `define NUM_BURSTS 512
+`endif
+
 task ui_write;
   input [ui_mask_width_lp*ui_burst_length_lp-1:0] wmask;
   input  [ui_data_width_p*ui_burst_length_lp-1:0] wdata;

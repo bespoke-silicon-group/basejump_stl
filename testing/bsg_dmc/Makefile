@@ -33,6 +33,11 @@ RUNS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
 RUN_SYNTHS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
                   run_synth-$(CLK_SPEED_P))
 
+# back-to-back writes to a non-zero bank, long enough to span several refresh
+# and read calibration periods
+TEST_BANKS := 1 2 3
+RUN_BANKS  := $(foreach TEST_BANK_P, $(TEST_BANKS), run_bank-$(TEST_BANK_P))
+
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
 
@@ -56,6 +61,11 @@ regression:
 	@! grep "error:" */run_synth-*.log
 	@echo -n "RUN_SYNTH TESTS PASSED      : "
 	@echo $(TOTAL_RUN_SYNTHS)
+	make run_bank -j32
+	@echo -n "TOTAL EXECUTED RUN_BANK RUNS: "
+	@echo $(words $(RUN_BANKS))
+	@echo -n "TOTAL PASSED RUN_BANK RUNS  : "
+	@grep "Regression\ test\ passed\!" */run_bank-*.log | wc -l
 
 run: $(RUNS)
 run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
@@ -67,6 +77,15 @@ run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
         +define+CMD_GAP_CYCLES=$(word 2, $(subst -, ,$*)) \
         +define+WRITE_GAP_CYCLES=$(word 3, $(subst -, ,$*)) \
         +define+RANDOM_THRESHOLD=$(word 4, $(subst -, ,$*))
+
+run_bank: $(RUN_BANKS)
+run_bank-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
+	mkdir run_bank-$*;
+	cd run_bank-$* && \
+        $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run_bank-$*.log -f ../filelist.lst -R \
+        +define+NONSYNTH_TB \
+        +define+TEST_BANK=$* \
+        +define+NUM_BURSTS=1024
 
 run_synth: $(RUN_SYNTHS)
 run_synth-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
