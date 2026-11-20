@@ -286,7 +286,6 @@ module traffic_generator
     btm
       (.clk_i      ( tag_clk )
       ,.data_i     ( tag_master_data_li )
-      ,.en_i       ( 1'b1 )
       ,.clients_r_o( tag_lines_o )
       );
 
@@ -332,12 +331,15 @@ module traffic_generator
   	      app_wdf_end = 0;
   	  end
 
+	  // must match bank_pos in bsg_tag_boot_rom.tr
+	  localparam test_bank_pos_lp = 25;
+
 	  initial begin
 	    $display("\n#### Regression test started ####");
 	    @(posedge dfi_init_calib_complete_i);
 	    repeat(1000) @(posedge ui_clk);
-	    for(k=0;k<512;k++) begin
-	      waddr = k*dq_burst_length_lp;
+	    for(k=0;k<`NUM_BURSTS;k++) begin
+	      waddr = (`TEST_BANK << test_bank_pos_lp) + k*dq_burst_length_lp;
 	      wdata = 0;
 	      for(j=0;j<ui_burst_length_lp;j++)
 	        wdata = (wdata << ui_data_width_p) + waddr + j;
@@ -349,8 +351,8 @@ module traffic_generator
 	      join
 	    end
         #1;
-	    for(k=0;k<512;k++) begin
-	      raddr = k*dq_burst_length_lp;
+	    for(k=0;k<`NUM_BURSTS;k++) begin
+	      raddr = (`TEST_BANK << test_bank_pos_lp) + k*dq_burst_length_lp;
 	      raddr_queue.push_front(raddr);
 	      ui_cmd(RD, raddr);
 	    end

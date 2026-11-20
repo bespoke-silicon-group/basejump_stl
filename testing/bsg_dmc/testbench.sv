@@ -281,6 +281,37 @@ module testbench();
     end
   end
 
+  // DDR command checker: tracks the active banks from the command pins and
+  // fails on an ACT to an active bank or a READ/WRITE to an idle bank. The
+  // memory model only prints a message for these.
+  logic [3:0] ddr_bank_active = '0;
+
+  task ddr_cmd_fail(input string msg);
+    $error("%t DDR command check FAILED: %s, bank %0d", $time, msg, ddr_ba[1:0]);
+    $display("\nRegression test failed!");
+    $finish();
+  endtask
+
+  always @(posedge ddr_ck_p) begin
+    if(ddr_cke === 1'b1 && ddr_cs_n === 1'b0) begin
+      case({ddr_ras_n, ddr_cas_n, ddr_we_n})
+        3'b011: begin // ACT
+          if(ddr_bank_active[ddr_ba[1:0]]) ddr_cmd_fail("ACT to an active bank");
+          ddr_bank_active[ddr_ba[1:0]] <= 1'b1;
+        end
+        3'b010: begin // PRE, A10 selects all banks
+          if(ddr_addr[10]) ddr_bank_active <= '0;
+          else             ddr_bank_active[ddr_ba[1:0]] <= 1'b0;
+        end
+        3'b101, 3'b100: begin // READ, WRITE, A10 selects auto precharge
+          if(!ddr_bank_active[ddr_ba[1:0]]) ddr_cmd_fail(ddr_we_n ? "READ to an idle bank" : "WRITE to an idle bank");
+          if(ddr_addr[10]) ddr_bank_active[ddr_ba[1:0]] <= 1'b0;
+        end
+        default: ;
+      endcase
+    end
+  end
+
   // ASSERTIONS_END
 
   initial begin
