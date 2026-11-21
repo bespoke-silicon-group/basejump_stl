@@ -27,11 +27,11 @@
 `include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_byte_banked
-  #(parameter `BSG_INV_PARAM(data_width_p)
+  #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
     , parameter latch_last_read_p=0
 
-    , parameter write_mask_width_lp=(data_width_p>>3)
+    , parameter write_mask_width_lp=(width_p>>3)
 
     // bank parameters
     , parameter num_width_bank_p=1
@@ -41,7 +41,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     , parameter bank_depth_lp=(els_p/num_depth_bank_p)
     , parameter bank_addr_width_lp=`BSG_SAFE_CLOG2(bank_depth_lp)
     , parameter depth_bank_idx_width_lp=`BSG_SAFE_CLOG2(num_depth_bank_p)
-    , parameter bank_width_lp=(data_width_p/num_width_bank_p)
+    , parameter bank_width_lp=(width_p/num_width_bank_p)
     , parameter bank_mask_width_lp=(bank_width_lp>>3)
   )
   (
@@ -52,9 +52,9 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     , input w_i
 
     , input [addr_width_lp-1:0] addr_i
-    , input [data_width_p-1:0] data_i
+    , input [width_p-1:0] data_i
     , input [write_mask_width_lp-1:0] write_mask_i
-    , output [data_width_p-1:0] data_o
+    , output [width_p-1:0] data_o
   );
 
   // Depth banks interleave on the low address bits when their count is a power of two,
@@ -65,7 +65,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
     for (genvar i = 0; i < num_width_bank_p; i++) begin: wb
       bsg_mem_1rw_sync_mask_write_byte #(
-        .data_width_p(bank_width_lp)
+        .width_p(bank_width_lp)
         ,.els_p(bank_depth_lp)
         ,.latch_last_read_p(latch_last_read_p)
       ) bank (
@@ -91,7 +91,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
       : addr_i[0+:bank_addr_width_lp];
 
     logic [num_depth_bank_p-1:0] bank_v_li;
-    logic [num_depth_bank_p-1:0][data_width_p-1:0] bank_data_lo;
+    logic [num_depth_bank_p-1:0][width_p-1:0] bank_data_lo;
    
     
     bsg_decode_with_v #(
@@ -106,7 +106,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
       for (genvar j = 0; j < num_depth_bank_p; j++) begin: db
 
         bsg_mem_1rw_sync_mask_write_byte #(
-          .data_width_p(bank_width_lp)
+          .width_p(bank_width_lp)
           ,.els_p(bank_depth_lp)
           ,.latch_last_read_p(latch_last_read_p)
         ) bank (
@@ -137,7 +137,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
     bsg_mux #(
       .els_p(num_depth_bank_p)
-      ,.width_p(data_width_p)
+      ,.width_p(width_p)
     ) data_out_mux (
       .data_i(bank_data_lo)
       ,.sel_i(depth_bank_idx_r)
@@ -151,8 +151,8 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
   initial begin
 
-    assert (data_width_p % 8 == 0)
-      else $error("data_width_p is not multiple of 8. %m");
+    assert (width_p % 8 == 0)
+      else $error("width_p is not multiple of 8. %m");
 
     // The depth banks must split the entries and the address bits exactly
     assert(num_depth_bank_p == 1
@@ -162,7 +162,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     assert(num_depth_bank_p == 1 || depth_bank_idx_width_lp + bank_addr_width_lp == addr_width_lp)
       else $error("[BSG_ERROR] the bank index and bank address do not split the address exactly. %m");
 
-    assert(data_width_p % num_width_bank_p == 0)
+    assert(width_p % num_width_bank_p == 0)
       else $error("[BSG_ERROR] num_width_bank_p does not divide even with width_p. %m");
     assert(bank_width_lp % 8 == 0)
       else $error("[BSG_ERROR] each width bank must be a whole number of bytes (data_width_p/num_width_bank_p must be a multiple of 8). %m");

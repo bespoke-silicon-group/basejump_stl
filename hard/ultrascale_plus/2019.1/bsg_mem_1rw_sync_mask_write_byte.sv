@@ -40,9 +40,9 @@
 module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
                                           ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
 
-                                          ,parameter `BSG_INV_PARAM(data_width_p )
+                                          ,parameter `BSG_INV_PARAM(width_p )
                                           ,parameter latch_last_read_p=0
-                                          ,parameter write_mask_width_lp = data_width_p>>3
+                                          ,parameter write_mask_width_lp = width_p>>3
                                           ,parameter enable_clock_gating_p=0
                                          )
   ( input clk_i
@@ -52,16 +52,16 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
    ,input w_i
 
    ,input [addr_width_lp-1:0]       addr_i
-   ,input [`BSG_SAFE_MINUS(data_width_p, 1):0]        data_i
+   ,input [`BSG_SAFE_MINUS(width_p, 1):0]        data_i
     // for each bit set in the mask, a byte is written
    ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] write_mask_i
 
-   ,output logic [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
+   ,output logic [`BSG_SAFE_MINUS(width_p, 1):0] data_o
   );
 
   wire unused = reset_i;
 
-  if (data_width_p == 0)
+  if (width_p == 0)
   begin: z
     wire unused0 = &{clk_i, v_i, w_i, addr_i, data_i, write_mask_i};
     assign data_o = '0;
@@ -77,7 +77,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
    * BRAM and URAM inference based on depth and width parameterizations.
    */
 
-    logic [data_width_p-1:0] mem [els_p-1:0];
+    logic [width_p-1:0] mem [els_p-1:0];
     logic [write_mask_width_lp-1:0] write_enable;
 
   /* In order to synthesize into a byte masked BRAM/URAM, follow instruction in

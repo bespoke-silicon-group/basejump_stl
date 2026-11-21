@@ -55,7 +55,7 @@ module bsg_mem_1rw_sync_mask_write_byte_segmented
     end // for (genvar i = 0; i < num_segments_p; i++)
 
     bsg_mem_1rw_sync_mask_write_byte #(
-      .data_width_p(width_p)
+      .width_p(width_p)
       ,.els_p(els_p)
       ,.latch_last_read_p(latch_last_read_p && num_segments_p == 1)
     ) 

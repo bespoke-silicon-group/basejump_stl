@@ -85,11 +85,11 @@ endgenerate
 
 endmodule
 
- module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
+ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
                            , parameter `BSG_INV_PARAM(els_p)
                            , parameter latch_last_read_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                           , parameter write_mask_width_lp = data_width_p>>3
+                           , parameter write_mask_width_lp = width_p>>3
                            , parameter enable_clock_gating_p=0
                            , parameter harden_p=1
                            )
@@ -100,11 +100,11 @@ endmodule
     ,input w_i
 
     ,input [addr_width_lp-1:0]       addr_i
-    ,input [`BSG_SAFE_MINUS(data_width_p, 1):0]        data_i
+    ,input [`BSG_SAFE_MINUS(width_p, 1):0]        data_i
      // for each bit set in the mask, a byte is written
     ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] write_mask_i
 
-    ,output logic [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
+    ,output logic [`BSG_SAFE_MINUS(width_p, 1):0] data_o
    );
 
      bytewrite_ram_1b #(
