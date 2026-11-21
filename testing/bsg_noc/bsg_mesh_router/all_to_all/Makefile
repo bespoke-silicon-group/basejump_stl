@@ -1,8 +1,13 @@
 export BASEJUMP_STL_DIR = $(shell git rev-parse --show-toplevel)
 export BSG_CADENV_DIR = $(abspath $(BASEJUMP_STL_DIR)/../bsg_cadenv)
-include $(BSG_CADENV_DIR)/cadenv.mk
+#include $(BSG_CADENV_DIR)/cadenv.mk
+include /home/projects/ee478a.2026spr/cadenv/cadenv_ee.mk
 
-
+# CAD Tool Paths
+VCS_BIN = $(VCS_HOME)/bin
+VERDI_BIN = $(VERDI_HOME)/bin
+VCS_BIN_DIR = $(VCS_BIN)
+export PATH:=$(PATH):$(VCS_BIN):$(VERDI_BIN)
 
 VCS_INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 VCS_INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
@@ -22,7 +27,6 @@ VCS_DEFINE += +define+DIMS_P=${DIMS_P}
 VCS_DEFINE += +define+RUCHE_X=${RUCHE_X}
 VCS_DEFINE += +define+RUCHE_Y=${RUCHE_Y}
 VCS_DEFINE += +define+DEPOPULATED=${DEPOPULATED}
-
 
 run:
 	vcs -R +v2k -sverilog -full64 -f sv.include -l vcs.log $(VCS_DEFINE)\
