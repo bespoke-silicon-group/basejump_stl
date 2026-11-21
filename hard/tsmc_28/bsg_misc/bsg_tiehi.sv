@@ -2,24 +2,24 @@
 
 module bsg_tiehi
 
-#(`BSG_INV_PARAM(width_p), harden_p=1)
+#(`BSG_INV_PARAM(width_p), harden_p=0)
 
 (output [width_p-1:0] o
 );
 
   if (harden_p)
-    begin: hard
+    begin: macro
       for (genvar i = 0; i < width_p; i++)
         begin: w
           TIEHBWP7T40P140
             TIE_HI_BSG_DONT_TOUCH
-              (.Z(o));
-        end: w
-    end: hard
+              (.Z(o[i]));
+        end
+    end
   else
-    begin: syn
+    begin: notmacro
       assign o = { width_p {1'b1} };
-    end: syn
+    end
    
 endmodule
 
