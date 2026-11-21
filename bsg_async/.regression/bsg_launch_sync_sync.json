@@ -1,0 +1,3080 @@
+{
+    "design_name": "bsg_launch_sync_sync", 
+    "filelist": [
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_30_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_40_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_50_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "iclk", 
+                    "delay": "0", 
+                    "port": "iclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "oclk", 
+                    "delay": "0", 
+                    "port": "oclk_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "iclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "iclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "oclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "oclk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this is a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_60_FO4", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }
+    ]
+}

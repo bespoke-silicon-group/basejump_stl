@@ -1,0 +1,234 @@
+{
+    "design_name": "bsg_idiv_iterative", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_misc/bsg_idiv_iterative.v", 
+        "basejump_stl/bsg_misc/bsg_buf.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v", 
+        "basejump_stl/bsg_misc/bsg_mux.v", 
+        "basejump_stl/bsg_misc/bsg_mux_one_hot.v", 
+        "basejump_stl/bsg_misc/bsg_buf_ctrl.v", 
+        "basejump_stl/bsg_misc/bsg_xnor.v", 
+        "basejump_stl/bsg_misc/bsg_nor2.v", 
+        "basejump_stl/bsg_misc/bsg_adder_cin.v", 
+        "basejump_stl/bsg_misc/bsg_idiv_iterative_controller.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_30_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_40_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_50_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_60_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 70", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_70_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 80", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_80_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 90", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_90_FO4", 
+            "parameters": []
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at a clock period (in num of FO4) = 100", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clk_100_FO4", 
+            "parameters": []
+        }
+    ]
+}

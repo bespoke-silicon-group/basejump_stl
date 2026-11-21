@@ -1,0 +1,1001 @@
+{
+    "design_name": "bsg_counter_up_down_variable", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_misc/bsg_counter_up_down_variable.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_30_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_40_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_50_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_60_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 70", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_70_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 80", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_80_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 90", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_90_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at a clock period (in num of FO4) = 100", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clk_100_FO4", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=1000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_30_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_40_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_50_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_60_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 70", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_70_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 80", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_80_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 90", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_90_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size large at a clock period (in num of FO4) = 100", 
+            "design_size": "large", 
+            "name": "bsg_counter_up_down_large_clk_100_FO4", 
+            "parameters": [
+                "max_step_p=4", 
+                "init_val_p=100", 
+                "max_val_p=10000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_30_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_40_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_50_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_60_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 70", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_70_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 80", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_80_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 90", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_90_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size very_large at a clock period (in num of FO4) = 100", 
+            "design_size": "very_large", 
+            "name": "bsg_counter_up_down_very_large_clk_100_FO4", 
+            "parameters": [
+                "max_step_p=8", 
+                "init_val_p=1000", 
+                "max_val_p=1000000000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_30_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_40_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_50_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_60_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 70", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_70_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 80", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_80_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 90", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_90_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is an up-down counter with initial and max values with size medium at a clock period (in num of FO4) = 100", 
+            "design_size": "medium", 
+            "name": "bsg_counter_up_down_medium_clk_100_FO4", 
+            "parameters": [
+                "max_step_p=2", 
+                "init_val_p=10", 
+                "max_val_p=100000"
+            ]
+        }
+    ]
+}
