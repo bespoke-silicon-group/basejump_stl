@@ -1,0 +1,69 @@
+export TESTING_COCOTB_DIR := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+
+#===============================================================================
+# Synopsys VCS Setup
+#
+# If you would like to use VCS for simulations, then you need to setup the cad
+# tool here. If you have access to bsg_cadenv and are running on a bsg_cadenv
+# compliant machine then simply clone the repo into this directory. Otherwise,
+# set the LM_LICENSE_FILE and VCS_HOME variables.
+#===============================================================================
+
+# If the machine you are working on is bsg_cadenv complient, then you do not
+# need to setup the cad tools, simply put bsg_cadenv in the same root dir.
+-include $(TESTING_COCOTB_DIR)/bsg_cadenv/cadenv.mk
+
+# License file path.
+export LM_LICENSE_FILE ?=
+
+# VCS home directory.
+export VCS_HOME ?=
+
+#===============================================================================
+# External Tool Dependancies
+#
+# Here we have targets to build any external tools that we need in order to use
+# the cocotb testing infrastructure.
+#
+
+VERILATOR_BUILD_DIR   := $(TESTING_COCOTB_DIR)/tools/verilator
+COCOTB_BUILD_DIR      := $(TESTING_COCOTB_DIR)/tools/cocotb
+COCOTB_VENV_BUILD_DIR := $(TESTING_COCOTB_DIR)/tools/cocotb_venv
+
+COCOTB_VENV_ACTIVATE := source $(COCOTB_VENV_BUILD_DIR)/bin/activate
+
+build_tools: $(VERILATOR_BUILD_DIR) $(COCOTB_VENV_BUILD_DIR)
+
+VERILATOR_VERSION :=4.100
+
+$(VERILATOR_BUILD_DIR):
+	mkdir -p $@
+	cd $@ ; wget https://www.veripool.org/ftp/verilator-$(VERILATOR_VERSION).tgz
+	cd $@ ; tar xvf verilator-$(VERILATOR_VERSION).tgz
+	cd $@/verilator-$(VERILATOR_VERSION) ; ./configure --prefix=$@/install
+	cd $@/verilator-$(VERILATOR_VERSION) ; $(MAKE)
+	cd $@/verilator-$(VERILATOR_VERSION) ; $(MAKE) install
+
+COCOTB_VERSION :=v1.4.0
+
+$(COCOTB_BUILD_DIR):
+	mkdir -p $(@D)
+	git clone https://github.com/cocotb/cocotb.git $@
+	cd $@ ; git checkout $(COCOTB_VERSION)
+
+PYTHON_VERSION :=3.6
+
+$(COCOTB_VENV_BUILD_DIR): $(COCOTB_BUILD_DIR)
+	mkdir -p $(@D)
+	virtualenv -p /usr/bin/python$(PYTHON_VERSION) $@
+	$(COCOTB_VENV_ACTIVATE) ; pip install $^
+
+clean_tools:
+	rm -rf $(VERILATOR_BUILD_DIR)
+	rm -rf $(COCOTB_BUILD_DIR)
+	rm -rf $(COCOTB_VENV_BUILD_DIR)
+
+
+# Inlcude the rest of the cocotb testing infrastructure.
+include $(TESTING_COCOTB_DIR)/common/mk/cocotb.tail_rules.mk
+

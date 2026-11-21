@@ -1,0 +1,4 @@
+*.pyc
+run_*/
+tools/
+bsg_cadenv/
