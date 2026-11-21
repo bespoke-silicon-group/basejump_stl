@@ -1,6 +1,6 @@
 export BASEJUMP_STL_DIR = $(abspath ../../..)
 export BSG_CADENV_DIR = $(abspath ../../../../bsg_cadenv)
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_test
