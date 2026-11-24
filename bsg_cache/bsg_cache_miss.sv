@@ -517,6 +517,8 @@ module bsg_cache_miss
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
         // set the tag and the valid bit to 1'b1 for the chosen way.
+        // A fill with a tag hit is a track miss: the block is already in the
+        // chosen way, and it may be locked. Leave its lock bit as it is.
         tag_mem_v_o = dma_done_i;
         tag_mem_w_o = 1'b1;
 
@@ -525,7 +527,7 @@ module bsg_cache_miss
           tag_mem_data_out[i].lock = decode_v_i.alock_op;
           tag_mem_data_out[i].valid = 1'b1; 
           tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
-          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i] & ~tag_hit_found_i;
           tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
         end
 
