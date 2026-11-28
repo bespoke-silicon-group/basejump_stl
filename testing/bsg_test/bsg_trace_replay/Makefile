@@ -6,7 +6,7 @@ CADENV_DIR=$(abspath ../../../../bsg_cadenv)
 
 ###########################################
 # SETUP THE TOOL PATHS
-include $(CADENV_DIR)/cadenv.mk
+-include $(CADENV_DIR)/cadenv.mk
 
 #############################################
 # SETUP THE INCLUDE PATH and SEARCH PATH

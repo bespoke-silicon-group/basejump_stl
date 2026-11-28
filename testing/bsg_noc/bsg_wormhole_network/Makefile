@@ -6,7 +6,7 @@ export BSG_CADENV_DIR = $(dir)/bsg_cadenv
 export BASEJUMP_STL_DIR = $(dir)/basejump_stl
 
 # Environment
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 run:
 	$(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -assert svaext -f ./filelist -debug_pp -R -top bsg_wormhole_network_tester +vcs+vcdpluson

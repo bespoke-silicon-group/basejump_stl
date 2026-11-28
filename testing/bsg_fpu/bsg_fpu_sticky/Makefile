@@ -1,7 +1,7 @@
 TOP ?= $(shell git rev-parse --show-toplevel)
 BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 run:
 	vcs -f sv.include +incdir+$(TOP)/bsg_misc +v2k -R +lint=all -sverilog -full64 \

@@ -1,4 +1,4 @@
-include ../../../bsg_cadenv/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 
 ELABORATE_OPTIONS = -full64
